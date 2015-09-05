@@ -1,5 +1,6 @@
 package ircclient;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -64,7 +65,6 @@ public class Card implements MouseListener, KeyListener {
         leaveButton.setName("Leave");
         leaveButton.addMouseListener(this);
 
-        Dimension dim2 = new Dimension(550, 23);
         serverText.setEditable(false);
         Font font = new Font("Courier New", Font.PLAIN, 12);
         serverText.setFont(font);
@@ -81,18 +81,23 @@ public class Card implements MouseListener, KeyListener {
 
         plain = new SimpleAttributeSet();
 
-        userBar.setPreferredSize(dim2);
         userBar.addKeyListener(this);
 
         JScrollPane serverScroll = new JScrollPane(serverText);
         serverScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         Dimension dim = new Dimension(780, 500);
         serverScroll.setPreferredSize(dim);
+        
+        newCard.setLayout(new BorderLayout());
+        
+        JPanel panel = new JPanel(new BorderLayout());
 
-        newCard.add(serverScroll);
-        newCard.add(leaveButton);
-        newCard.add(userBar);
-        newCard.add(sendButton);
+        newCard.add(serverScroll, BorderLayout.CENTER);
+        panel.add(leaveButton, BorderLayout.WEST);
+        panel.add(userBar, BorderLayout.CENTER);
+        panel.add(sendButton, BorderLayout.EAST);
+        
+        newCard.add(panel, BorderLayout.PAGE_END);
         sendButton.addMouseListener(this);
 
         //this.tabPane = tabPane;
@@ -150,7 +155,7 @@ public class Card implements MouseListener, KeyListener {
     public String getMessage() {
         String retString = userBar.getText();
         try {
-            doc.insertString(doc.getLength(), "<" + "You" + ">", userAttributeSet);
+            doc.insertString(doc.getLength(), "<" + "You" + "> ", userAttributeSet);
             doc.insertString(doc.getLength(), retString + "\n", plain);
         } catch (BadLocationException ex) {
             Logger.getLogger(Card.class.getName()).log(Level.SEVERE, null, ex);
