@@ -37,7 +37,7 @@ public class FromServer extends Thread {
                 printLine(newLine);
             }
         } catch (IOException ex) {
-            
+            clientGUI.disconnected();
         }
     }
     

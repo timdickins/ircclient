@@ -5,16 +5,23 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-public class GUI implements MouseListener {
+
+public class GUI implements MouseListener, ActionListener {
     
     JFrame GUIFrame;
     JTabbedPane tabPane;
@@ -27,7 +34,9 @@ public class GUI implements MouseListener {
         this.clientGUI = clientGUI;
         this.paneArray = paneArray;
         this.paneNames = paneNames;
+        
         GUIFrame = new JFrame("IRC client");
+        GUIFrame.setJMenuBar(createMenu());
         GUIFrame.setLayout(new BoxLayout(GUIFrame.getContentPane(), BoxLayout.Y_AXIS));
         GUIFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         
@@ -36,9 +45,51 @@ public class GUI implements MouseListener {
         GUIFrame.setSize(800, 600);
         GUIFrame.setVisible(true);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        //GUIFrame.setSize(200, 150);
         GUIFrame.setLocation(dim.width / 2 - GUIFrame.getSize().width / 2, dim.height / 2 - GUIFrame.getSize().height / 2);
         addCard("Main");
+    }
+    
+    private JMenuBar createMenu() {
+        JMenuBar menuBar;
+        JMenu file;
+        JMenu tools;
+        JMenuItem login;
+        JMenuItem join;
+        JMenuItem leave;
+        JMenuItem exit;
+        JMenuItem settings;
+        
+        menuBar = new JMenuBar();
+        
+        file = new JMenu("File");
+        
+        login = new JMenuItem("Login");
+        login.setName("Login");
+        login.addActionListener(this);
+        file.add(login);
+        
+        file.addSeparator();
+        
+        join = new JMenuItem("Join Channel");
+        leave = new JMenuItem("Leave Channel");
+        
+        file.add(join);
+        file.add(leave);
+        
+        file.addSeparator();
+        
+        exit = new JMenuItem("Exit");
+        file.add(exit);
+        
+        tools = new JMenu("Tools");
+        
+        settings = new JMenuItem("Settings");
+        tools.add(settings);
+        
+        menuBar.add(file);
+        menuBar.add(tools);
+        
+        return menuBar;
     }
     
     public void addLine(String channel, String message, String user) {
@@ -110,7 +161,7 @@ public class GUI implements MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-
+        
     }
 
     @Override
@@ -126,6 +177,15 @@ public class GUI implements MouseListener {
     @Override
     public void mouseExited(MouseEvent e) {
 
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        System.out.println("HELLO");
+        Object eventComponent = e.getSource();
+        if (eventComponent.toString().contains("Login")) {
+            clientGUI.login();
+        }
     }
 
 }

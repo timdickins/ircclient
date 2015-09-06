@@ -14,14 +14,27 @@ public class ClientGUI {
     ToServer toServer;
     ArrayList paneArray;
     ArrayList paneNames;
+    Client client;
 
-    public ClientGUI(ToServer toServer) {
+    public ClientGUI(Client client) {
         this.paneArray = new ArrayList();
         this.paneNames = new ArrayList();
-        this.toServer = toServer;
+        this.client = client;
 
         GUI newGUI = new GUI(paneArray, paneNames, this);
         this.newGUI = newGUI;
+    }
+    
+    public void setSockets(ToServer toServer) {
+        this.toServer = toServer;
+    }
+    
+    public void login() {
+        client.login();
+    }
+    
+    public void disconnected() {
+        client.disconnected();
     }
 
     public void addLine(String message) {

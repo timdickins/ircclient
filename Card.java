@@ -177,7 +177,12 @@ public class Card implements MouseListener, KeyListener {
             String message = getMessage();
             processSend(message);
         } else if (componentName.contains("Leave")) {
-            if (channel.equals("Main")) {
+            closeTab();
+        }
+    }
+    
+    public void closeTab() {
+        if (channel.equals("Main")) {
                 
             } else {
                 clientGUI.sendToServer("PART "+channel);
@@ -185,7 +190,6 @@ public class Card implements MouseListener, KeyListener {
                 paneArray.remove(tabIndex);
                 paneNames.remove(tabIndex);
             }
-        }
     }
 
     @Override

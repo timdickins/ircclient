@@ -16,8 +16,9 @@ import static javax.swing.JFrame.EXIT_ON_CLOSE;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
+import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 
-public class Login implements MouseListener, KeyListener {
+public class Login implements MouseListener, KeyListener, Runnable {
 
     private JFrame LoginFrame;
     private JTextPane nickArea;
@@ -27,17 +28,7 @@ public class Login implements MouseListener, KeyListener {
 
     public Login(Client client) {
         this.client = client;
-        LoginFrame = new JFrame("Login");
-        LoginFrame.setLayout(new BoxLayout(LoginFrame.getContentPane(), BoxLayout.Y_AXIS));
-        LoginFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-
-        startGUI(LoginFrame.getContentPane());
-
-        LoginFrame.pack();
-        LoginFrame.setVisible(true);
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        LoginFrame.setSize(200, 150);
-        LoginFrame.setLocation(dim.width / 2 - LoginFrame.getSize().width / 2, dim.height / 2 - LoginFrame.getSize().height / 2);
+        
     }
 
     private void startGUI(Container container) {
@@ -124,5 +115,20 @@ public class Login implements MouseListener, KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
 
+    }
+
+    @Override
+    public void run() {
+        LoginFrame = new JFrame("Login");
+        LoginFrame.setLayout(new BoxLayout(LoginFrame.getContentPane(), BoxLayout.Y_AXIS));
+        LoginFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+        startGUI(LoginFrame.getContentPane());
+
+        LoginFrame.pack();
+        LoginFrame.setVisible(true);
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        LoginFrame.setSize(200, 150);
+        LoginFrame.setLocation(dim.width / 2 - LoginFrame.getSize().width / 2, dim.height / 2 - LoginFrame.getSize().height / 2);
     }
 }
