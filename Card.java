@@ -60,10 +60,6 @@ public class Card implements MouseListener, KeyListener {
 
         JButton sendButton = new JButton("Send");
         sendButton.setName("Send");
-        
-        JButton leaveButton = new JButton("Leave Channel");
-        leaveButton.setName("Leave");
-        leaveButton.addMouseListener(this);
 
         serverText.setEditable(false);
         Font font = new Font("Courier New", Font.PLAIN, 12);
@@ -93,7 +89,6 @@ public class Card implements MouseListener, KeyListener {
         JPanel panel = new JPanel(new BorderLayout());
 
         newCard.add(serverScroll, BorderLayout.CENTER);
-        panel.add(leaveButton, BorderLayout.WEST);
         panel.add(userBar, BorderLayout.CENTER);
         panel.add(sendButton, BorderLayout.EAST);
         
@@ -176,8 +171,6 @@ public class Card implements MouseListener, KeyListener {
         if (componentName.contains("Send")) {
             String message = getMessage();
             processSend(message);
-        } else if (componentName.contains("Leave")) {
-            closeTab();
         }
     }
     
@@ -190,6 +183,10 @@ public class Card implements MouseListener, KeyListener {
                 paneArray.remove(tabIndex);
                 paneNames.remove(tabIndex);
             }
+    }
+    
+    public void part() {
+        clientGUI.sendToServer("PART "+channel);
     }
 
     @Override

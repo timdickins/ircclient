@@ -20,35 +20,34 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-
 public class GUI implements MouseListener, ActionListener {
-    
+
     JFrame GUIFrame;
     JTabbedPane tabPane;
     ArrayList paneArray;
     ArrayList paneNames;
     int tabCount = 0;
     ClientGUI clientGUI;
-    
+
     GUI(ArrayList paneArray, ArrayList paneNames, ClientGUI clientGUI) {
         this.clientGUI = clientGUI;
         this.paneArray = paneArray;
         this.paneNames = paneNames;
-        
+
         GUIFrame = new JFrame("IRC client");
         GUIFrame.setJMenuBar(createMenu());
         GUIFrame.setLayout(new BoxLayout(GUIFrame.getContentPane(), BoxLayout.Y_AXIS));
         GUIFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        
+
         startGUI(GUIFrame.getContentPane());
-        
+
         GUIFrame.setSize(800, 600);
         GUIFrame.setVisible(true);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         GUIFrame.setLocation(dim.width / 2 - GUIFrame.getSize().width / 2, dim.height / 2 - GUIFrame.getSize().height / 2);
         addCard("Main");
     }
-    
+
     private JMenuBar createMenu() {
         JMenuBar menuBar;
         JMenu file;
@@ -58,110 +57,112 @@ public class GUI implements MouseListener, ActionListener {
         JMenuItem leave;
         JMenuItem exit;
         JMenuItem settings;
-        
+
         menuBar = new JMenuBar();
-        
+
         file = new JMenu("File");
-        
+
         login = new JMenuItem("Login");
         login.setName("Login");
         login.addActionListener(this);
         file.add(login);
-        
+
         file.addSeparator();
-        
+
         join = new JMenuItem("Join Channel");
+        join.setName("Join");
+        join.addActionListener(this);
         leave = new JMenuItem("Leave Channel");
-        
+        leave.setName("Leave");
+        leave.addActionListener(this);
+
         file.add(join);
         file.add(leave);
-        
+
         file.addSeparator();
-        
+
         exit = new JMenuItem("Exit");
+        exit.setName("Exit");
+        exit.addActionListener(this);
         file.add(exit);
-        
+
         tools = new JMenu("Tools");
-        
+
         settings = new JMenuItem("Settings");
         tools.add(settings);
-        
+
         menuBar.add(file);
         menuBar.add(tools);
-        
+
         return menuBar;
     }
-    
+
     public void addLine(String channel, String message, String user) {
         Card card;
         String currentChannel;
         int paneLength = paneArray.size();
         int counter = 0;
-        
-        System.err.println("REQUESTED CHANNEL"+channel);
-        
+
+        System.err.println("REQUESTED CHANNEL" + channel);
+
         while (counter < paneLength) {
             card = (Card) paneArray.get(counter);
             currentChannel = (String) paneNames.get(counter);
-            
-            System.err.println("foundchannel"+counter+" "+currentChannel);
-            
+
             if (currentChannel.contains(channel)) {
                 counter = paneLength++;
-                card.addLineUser(message+"\n",user);
+                card.addLineUser(message + "\n", user);
                 System.err.println("SUCCESS");
             }
             counter++;
         }
     }
-    
+
     public void addLineServer(String channel, String message) {
         Card card;
         String currentChannel;
         int paneLength = paneArray.size();
         int counter = 0;
-        
-        System.err.println("REQUESTED CHANNEL"+channel);
-        
+
+        System.err.println("REQUESTED CHANNEL" + channel);
+
         while (counter < paneLength) {
             card = (Card) paneArray.get(counter);
             currentChannel = (String) paneNames.get(counter);
-            
-            System.err.println("foundchannel"+counter+" "+currentChannel);
-            
+
             if (currentChannel.contains(channel)) {
                 counter = paneLength++;
-                card.addLine(message+"\n");
+                card.addLine(message + "\n");
                 System.err.println("SUCCESS");
             }
             counter++;
         }
     }
-    
+
     private void startGUI(Container contentPane) {
         tabPane = new JTabbedPane();
         contentPane.add(tabPane, BorderLayout.CENTER);
     }
-    
+
     public void addCard(String channel) {
         Card newCard = new Card(tabPane, channel, clientGUI, paneArray, paneNames);
         paneArray.add(newCard);
         paneNames.add(channel);
         tabCount++;
     }
-    
+
     public void removeCard(String channel) {
         //TO BE MADE
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        
+
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-        
+
     }
 
     @Override
@@ -181,11 +182,25 @@ public class GUI implements MouseListener, ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        System.out.println("HELLO");
         Object eventComponent = e.getSource();
         if (eventComponent.toString().contains("Login")) {
             clientGUI.login();
+        } else if (eventComponent.toString().contains("Leave")) {
+            Card channel;
+            channel = (Card) paneArray.get(tabPane.getSelectedIndex());
+            channel.part();
+            tabPane.removeTabAt(tabPane.getSelectedIndex());
+            paneArray.remove(tabPane.getSelectedIndex());
+            paneNames.remove(tabPane.getSelectedIndex());  
+        } else if (eventComponent.toString().contains("Join")){
+            (new Thread(new StringEnter(this))).start();
+        }else if (eventComponent.toString().contains("Exit")){
+            System.exit(1);
         }
+    }
+    
+    public void joinChannel(String channel) {
+        clientGUI.sendToServer("JOIN "+channel);
     }
 
 }
